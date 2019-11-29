@@ -8,9 +8,10 @@ import json
 
 import clear
 
-DATABASE_URL = os.environ['DATABASE_URL']
+#DATABASE_URL = os.environ['DATABASE_URL']
+URL = 'postgres://ybgqdfwrfktliz:ed949a4fa7a88c55fc89844f3376c3aa59c4d64bde80a54b78b45d8397591960@ec2-46-137-113-157.eu-west-1.compute.amazonaws.com:5432/dckopqv6o4em74'
 #Connect to DB
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+conn = psycopg2.connect(URL, sslmode='require')
 
 #If permission Error
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
@@ -52,7 +53,7 @@ print("Database created.")
 query = "INSERT INTO {} VALUES {} RETURNING {}"
 
 
-with open('my-application/input/chats.json') as f:
+with open('../../input/chats.json') as f:
     chats_json = json.load(f)
 
 
