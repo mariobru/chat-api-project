@@ -1,1 +1,1 @@
-# chat-api-project
+# chat-sentiment-analysis-service
