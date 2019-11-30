@@ -42,7 +42,7 @@ def demo2(table):
         print(int(result[0][0])+1)
         return json.dumps(result)       
 
-@post('/addUser')
+@post('/user/create')
 def add():
     name = str(request.forms.get("name"))
     print(name)
@@ -51,6 +51,22 @@ def add():
     result = cur.fetchall()
     iduser = int(result[0][0]) + 1
     query = """INSERT INTO users (iduser, username) VALUES ({}, '{}') RETURNING {};""".format(iduser, name, 'users.iduser')
+    cur.execute(query)
+    id = cur.fetchone()[0]
+    print(id)
+    return json.dumps(id)
+
+@post('/chat/<chat_id>/addmessage')
+def add(chat_id):
+    chats_idchat = int(chat_id)
+    userid = int(request.forms.get("userid"))
+    text = str(request.forms.get("message"))
+    print(chats_idchat, userid)
+    query = """select idmessage from messages order by idmessage desc limit 1;"""
+    cur.execute(query)
+    result = cur.fetchall()
+    idmessage = int(result[0][0]) + 1
+    query = """INSERT INTO messages (idmessage, text, datetime, users_iduser, chats_idchat) VALUES ({}, '{}', to_char(current_timestamp, 'yyyy-mm-dd hh:mi:ss'), {}, {}) RETURNING {};""".format(idmessage, text, userid, chats_idchat, 'messages.idmessage')
     cur.execute(query)
     id = cur.fetchone()[0]
     print(id)
