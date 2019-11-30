@@ -18,31 +18,43 @@ def index():
         "nombre": random.choice(["Pepe", "Juan", "Fran", "Luis"])
     }
 
-@get("/<tabla>")
-def demo2(tabla):
-    if tabla == "users":
+@get("/<table>")
+def demo2(table):
+    if table == "users":
         query = """SELECT * FROM users;"""
         cur.execute(query)
         result = cur.fetchall()
         return json.dumps(result)
-    elif tabla == "messages":
+    elif table == "messages":
         query = """SELECT * FROM messages;"""
         cur.execute(query)
         result = cur.fetchall()
         return json.dumps(result)
-    elif tabla == "chats":
+    elif table == "chats":
         query = """SELECT * FROM chats;"""
         cur.execute(query)
         result = cur.fetchall()
         return json.dumps(result)
+    elif table == "iduser":
+        query = """select iduser from users order by iduser desc limit 1;"""
+        cur.execute(query)
+        result = cur.fetchall()
+        print(int(result[0][0])+1)
+        return json.dumps(result)       
 
-# @post('/add')
-# def add():
-#     print(dict(request.forms))
-#     autor=request.forms.get("autor")
-#     chiste=request.forms.get("chiste")  
-#     return {
-#         "inserted_doc": str(coll.addChiste(autor,chiste))}
+@post('/addUser')
+def add():
+    name = str(request.forms.get("name"))
+    print(name)
+    query = """select iduser from users order by iduser desc limit 1;"""
+    cur.execute(query)
+    result = cur.fetchall()
+    iduser = int(result[0][0]) + 1
+    query = """INSERT INTO users (iduser, username) VALUES ({}, '{}') RETURNING {};""".format(iduser, name, 'users.iduser')
+    cur.execute(query)
+    id = cur.fetchone()[0]
+    print(id)
+    return json.dumps(id)
 
 port = int(os.getenv("PORT", 8080))
 print(f"Running server {port}....")
