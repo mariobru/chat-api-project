@@ -4,7 +4,6 @@ import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT 
 import json
-
 import clear
 
 #DATABASE_URL = os.environ['DATABASE_URL']
