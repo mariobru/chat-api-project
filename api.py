@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from bottle import route, run, get, post, request
+from bottle import route, run, get, post, request, static_file
 import psycopg2
 import json
 import os
@@ -18,6 +18,10 @@ def index():
     return {
         "Chat Sentiment Analysis API": "https://github.com/mariobru/chat-sentiment-analysis-service"
     }
+
+@route('/graphics')
+def graphics():
+    return static_file('index.html', root='/home/mariobru/git_ironhack/chat-sentiment-analysis-service/webgraph')
 
 @get("/<table>")
 def selectTables(table):
