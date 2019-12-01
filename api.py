@@ -16,7 +16,7 @@ cur = conn.cursor()
 @get("/")
 def index():
     return {
-        "chatAPI": random.choice(["Create users!", "Add Messages"])
+        "Chat Sentiment Analysis API": "https://github.com/mariobru/chat-sentiment-analysis-service"
     }
 
 @get("/<table>")
@@ -91,6 +91,7 @@ def insert_name():
                 <input type="submit" />
               </form>'''
 
+
 @post('/user/create')
 def createUser():
     name = str(request.forms.get("name"))
@@ -100,7 +101,10 @@ def createUser():
         cur.execute(query)
         dbname = cur.fetchone()[0]
         print(dbname)
-    except:hat/7/showconvame already exists! Try a new one ;)"})
+    except:
+        dbname = None
+    if name == dbname:
+        return json.dumps({"error": "This name already exists! Try a new one ;)"})
     else:
         query = """SELECT iduser FROM users ORDER BY iduser DESC limit 1;"""
         cur.execute(query)
