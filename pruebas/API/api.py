@@ -42,8 +42,16 @@ def demo2(table):
         print(int(result[0][0])+1)
         return json.dumps(result)       
 
+@get("/chat/<chat_id>/list")
+def chatMessages(chat_id):
+    chatid = int(chat_id)
+    query = """select users_iduser, text from messages where chats_idchat={}""".format(chatid)
+    cur.execute(query)
+    result = cur.fetchall()
+    return json.dumps(result)
+
 @post('/user/create')
-def add():
+def createUser():
     name = str(request.forms.get("name"))
     print(name)
     query = """select iduser from users order by iduser desc limit 1;"""
@@ -56,8 +64,20 @@ def add():
     print(id)
     return json.dumps(id)
 
+@post('/chat/create')
+def createChat():
+    query = """select idchat from chats order by idchat desc limit 1;"""
+    cur.execute(query)
+    result = cur.fetchall()
+    idchat = int(result[0][0]) + 1
+    query = """INSERT INTO chats (idchat) VALUES ({}) RETURNING {};""".format(idchat,'chats.idchat')
+    cur.execute(query)
+    id = cur.fetchone()[0]
+    print("New chat created with chatid:",id)
+    return json.dumps(id)
+
 @post('/chat/<chat_id>/addmessage')
-def add(chat_id):
+def addMessage(chat_id):
     chats_idchat = int(chat_id)
     userid = int(request.forms.get("userid"))
     text = str(request.forms.get("message"))
