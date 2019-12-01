@@ -19,7 +19,7 @@ def index():
     }
 
 @get("/<table>")
-def demo2(table):
+def selectTables(table):
     if table == "users":
         query = """SELECT * FROM users;"""
         cur.execute(query)
