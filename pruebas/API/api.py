@@ -15,7 +15,7 @@ cur = conn.cursor()
 @get("/")
 def index():
     return {
-        "nombre": random.choice(["Pepe", "Juan", "Fran", "Luis"])
+        "chatAPI": random.choice(["Create users!", "Add Messages"])
     }
 
 @get("/<table>")
@@ -45,7 +45,14 @@ def demo2(table):
 @get("/chat/<chat_id>/list")
 def chatMessages(chat_id):
     chatid = int(chat_id)
-    query = """select users_iduser, text from messages where chats_idchat={}""".format(chatid)
+    query = """SELECT text FROM messages WHERE chats_idchat={};""".format(chatid)
+    cur.execute(query)
+    result = cur.fetchall()
+    return json.dumps(result)
+
+@get("/user/<user_id>/listmessages")
+def userMessages(user_id):
+    query = """SELECT text FROM messages WHERE users_iduser={};""".format(user_id)
     cur.execute(query)
     result = cur.fetchall()
     return json.dumps(result)
@@ -54,7 +61,7 @@ def chatMessages(chat_id):
 def createUser():
     name = str(request.forms.get("name"))
     print(name)
-    query = """select iduser from users order by iduser desc limit 1;"""
+    query = """SELECT iduser FROM users ORDER BY iduser DESC limit 1;"""
     cur.execute(query)
     result = cur.fetchall()
     iduser = int(result[0][0]) + 1
