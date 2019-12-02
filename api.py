@@ -23,14 +23,10 @@ def index():
         "Chat Sentiment Analysis API": "https://github.com/mariobru/chat-sentiment-analysis-service"
     }
 
-@route('/graphics')
-def graphics():
-    return static_file('index.html', root='/home/mariobru/git_ironhack/chat-sentiment-analysis-service/webgraph')
-
 @get("/<table>")
 def selectTables(table):
     if table == "users":
-        query = """SELECT * FROM users;"""
+        query = """SELECT * FROM users order by iduser;"""
         cur.execute(query)
         result = cur.fetchall()
         return json.dumps(result)
@@ -175,7 +171,6 @@ def userRecommend(user_id):
     docs = dict()
     for u in data:
         messages = userMessages(u[0])
-        #mestring = ' '.join([data for ele in messages for data in ele])
         docs.update({u[1]:messages})
     count_vectorizer = CountVectorizer()
     sparse_matrix = count_vectorizer.fit_transform(docs.values())
