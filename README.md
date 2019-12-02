@@ -1,10 +1,9 @@
 # chat-sentiment-analysis-service
 
-**Description:** I want to analyze the `public` chat messages (like slack public channels) of my team and create sentiment metrics
-of the different people on your team. The goal of this project is to analyze the conversations of my team
+**Description:**  The goal of this project is to analyze the conversations of my team
 to ensure they are happy 😃.
  
-We will practice in this project:
+I will practice in this project:
 - API (bottle)
 - TextBlob sentiment analysis
 - Docker, Heroku and Cloud databases
@@ -18,40 +17,45 @@ We will practice in this project:
 - (L4🤭) Recommend friends to a user based on the contents from chat `documents` using a recommender system with `NLP` analysis.
 
 ​
-## TODO's - API Endpoints
-​
-You have to create an api with all this endpoints:
-​
-### 1. User endpoints
+## How to use this API:
+
+- (GET) `/users` 
+  - **Purpose:** Shows all users in DB
+  - **Params:** Not needed
+  - **Returns:** `user_id` and `usernames`
 - (POST) `/user/create` 
   - **Purpose:** Create a user and save into DB
   - **Params:** `username` the user name
   - **Returns:** `user_id`
+- (GET) `/user/<user_id>/messages`  
+  - **Purpose:** Shows the history of messages for a specific user
+  - **Returns:** json array all messages
 - (GET) `/user/<user_id>/recommend`  
   - **Purpose:** Recommend friend to this user based on chat contents
   - **Returns:** json array with top 3 similar users
-​
-### 2. Chat endpoints:
-- (GET) `/chat/create` 
+- (POST) `/chat/create` 
   - **Purpose:** Create a conversation to load messages
-  - **Params:** An array of users ids `[user_id]`
+  - **Params:** Not needed
   - **Returns:** `chat_id`
 - (GET) `/chat/<chat_id>/adduser` 
-  - **Purpose:** Add a user to a chat, this is optional just in case you want to add more users to a chat after it's creation.
+  - **Purpose:** Add a user to a chat, this is optional just in case you want to add more users to a chat after it's creation
   - **Params:** `user_id`
   - **Returns:** `chat_id`
-- (POST) `/chat/<chat_id>/addmessage` 
-  - **Purpose:** Add a message to the conversation. Help: Before adding the chat message to the database, check that the incoming user is part of this chat id. If not, raise an exception.
+- (POST) `/chat/addmessage` 
+  - **Purpose:** Add a message to the conversation.
   - **Params:**
-    - `chat_id`: Chat to store message
-    - `user_id`: the user that writes the message
+    - `user_id`: Chat to store message
+    - `chat_id`: the user that writes the message
     - `text`: Message text
   - **Returns:** `message_id`
 - (GET) `/chat/<chat_id>/list` 
   - **Purpose:** Get all messages from `chat_id`
   - **Returns:** json array with all messages from this `chat_id`
+- (GET) `/chat/<chat_id>/showconv` 
+  - **Purpose:** Get all messages from `chat_id` with the `usernames`and timestamps.
+  - **Returns:** json array with all messages from this `chat_id`
 - (GET) `/chat/<chat_id>/sentiment` 
-  - **Purpose:** Analyze messages from `chat_id`. Use `NLTK` sentiment analysis package for this task
+  - **Purpose:** Analyze messages from `chat_id`. I use `TextBlob` sentiment analysis package for this task
   - **Returns:** json with all sentiments from messages in the chat
 ​
 ​
@@ -69,5 +73,4 @@ You have to create an api with all this endpoints:
 - [https://runnable.com/docker/python/dockerize-your-python-application]
 - [https://devcenter.heroku.com/articles/container-registry-and-runtime]
 - [https://devcenter.heroku.com/categories/deploying-with-docker]
-- Mongodb Atlas [https://www.mongodb.com/cloud/atlas]
-- MySQL ClearDB [https://devcenter.heroku.com/articles/cleardb]
+- [https://www.heroku.com/postgres]
