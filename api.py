@@ -20,8 +20,9 @@ cur = conn.cursor()
 @get("/")
 def index():
     return {
-        "Chat Sentiment Analysis API": "https://github.com/mariobru/chat-sentiment-analysis-service",
-        "Created by": "Mario Bru"
+        "Chat Sentiment Analysis API": "https://chat-api-sentiment-analysis.herokuapp.com/",
+        "Created by": "Mario Bru",
+        "README" : "https://github.com/mariobru/chat-sentiment-analysis-service"
     }
 
 @get("/<table>")
