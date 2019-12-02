@@ -61,7 +61,6 @@ def chatMessages(chat_id):
 
 @get("/user/<user_id>/messages")
 def userMessages(user_id):
-    chatid = int(user_id)
     query = """SELECT text FROM messages WHERE users_iduser={};""".format(user_id)
     cur.execute(query)
     result = cur.fetchall()
@@ -70,7 +69,7 @@ def userMessages(user_id):
 @get("/chat/<chat_id>/showconv")
 def chatConv(chat_id):
     chatid = int(chat_id)
-    query = """select u.username, m.text from users u inner join messages m on u.iduser = m.users_iduser where m.chats_idchat={} order by m.datetime asc;""".format(chatid)
+    query = """select m.datetime, u.username, m.text from users u inner join messages m on u.iduser = m.users_iduser where m.chats_idchat={} order by m.datetime asc;""".format(chatid)
     cur.execute(query)
     result = cur.fetchall()
     return json.dumps(result)
@@ -96,12 +95,6 @@ def chatSent(chat_id):
             'Subjectivity mean of this chat': subjectivity_mean
             }
 
-@get("/user/<user_id>/listmessages")
-def userMessages(user_id):
-    query = """SELECT text FROM messages WHERE users_iduser={};""".format(user_id)
-    cur.execute(query)
-    result = cur.fetchall()
-    return json.dumps(result)
 
 @get('/user/create')
 def insert_name():
@@ -174,14 +167,16 @@ def addMessage():
 
 @get("/user/<user_id>/recommend")
 def userRecommend(user_id):
-    data = selectTables("users")
-    print(data)
+    query = """select username from users where iduser={}""".format(user_id)
+    cur.execute(query)
+    name = cur.fetchone()[0]
+    print(name,type(name))
+    data = json.loads(selectTables("users"))
     docs = dict()
     for u in data:
-        print(u[0])
         messages = userMessages(u[0])
-        mestring = ' '.join([data for ele in messages for data in ele])
-        docs.update({u[1]:mestring})
+        #mestring = ' '.join([data for ele in messages for data in ele])
+        docs.update({u[1]:messages})
     count_vectorizer = CountVectorizer()
     sparse_matrix = count_vectorizer.fit_transform(docs.values())
     doc_term_matrix = sparse_matrix.todense()
