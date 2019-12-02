@@ -5,7 +5,11 @@ import json
 import os
 import random
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from textblob import TextBlob 
+from textblob import TextBlob
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity as distance 
 
 # Connection to Postgresql in Heroku:
 URL = 'postgres://ybgqdfwrfktliz:ed949a4fa7a88c55fc89844f3376c3aa59c4d64bde80a54b78b45d8397591960@ec2-46-137-113-157.eu-west-1.compute.amazonaws.com:5432/dckopqv6o4em74'
@@ -55,10 +59,18 @@ def chatMessages(chat_id):
     result = cur.fetchall()
     return json.dumps(result)
 
+@get("/user/<user_id>/messages")
+def userMessages(user_id):
+    chatid = int(user_id)
+    query = """SELECT text FROM messages WHERE users_iduser={};""".format(user_id)
+    cur.execute(query)
+    result = cur.fetchall()
+    return json.dumps(result)
+
 @get("/chat/<chat_id>/showconv")
 def chatConv(chat_id):
     chatid = int(chat_id)
-    query = """select u.username, m.text from users u inner join messages m on u.iduser = m.users_iduser where m.chats_idchat={};""".format(chatid)
+    query = """select u.username, m.text from users u inner join messages m on u.iduser = m.users_iduser where m.chats_idchat={} order by m.datetime asc;""".format(chatid)
     cur.execute(query)
     result = cur.fetchall()
     return json.dumps(result)
@@ -67,19 +79,22 @@ def chatConv(chat_id):
 def chatSent(chat_id):
     myjson = chatMessages(chat_id)
     messages = json.loads(myjson)
-    polarity = 0
-    subjectivity = 0
-    for e in messages:
-        polarity += TextBlob(*e).sentiment[0]
-        subjectivity += TextBlob(*e).sentiment[1]
-    polarity_mean = polarity/len(messages)
-    subjectivity_mean = subjectivity/len(messages)
-    return {
-        'Polarity': 'is a float value within the range [-1.0 to 1.0] where 0 indicates neutral, +1 indicates a very positive sentiment and -1 represents a very negative sentiment.',
-        'Subjectivity': 'is a float value within the range [0.0 to 1.0] where 0.0 is very objective and 1.0 is very subjective. Subjective sentence expresses some personal feelings, views, beliefs, opinions, allegations, desires, beliefs, suspicions, and speculations where as Objective sentences are factual.',
-        'Polarity mean of this chat': polarity_mean, 
-        'Subjectivity mean of this chat': subjectivity_mean
-        }
+    if len(messages) == 0:
+        return json.dumps({"Error": "This chat has no messages."})
+    else:
+        polarity = 0
+        subjectivity = 0
+        for e in messages:
+            polarity += TextBlob(*e).sentiment[0]
+            subjectivity += TextBlob(*e).sentiment[1]
+        polarity_mean = polarity/len(messages)
+        subjectivity_mean = subjectivity/len(messages)
+        return {
+            'Polarity': 'is a float value within the range [-1.0 to 1.0] where 0 indicates neutral, +1 indicates a very positive sentiment and -1 represents a very negative sentiment.',
+            'Subjectivity': 'is a float value within the range [0.0 to 1.0] where 0.0 is very objective and 1.0 is very subjective. Subjective sentence expresses some personal feelings, views, beliefs, opinions, allegations, desires, beliefs, suspicions, and speculations where as Objective sentences are factual.',
+            'Polarity mean of this chat': polarity_mean, 
+            'Subjectivity mean of this chat': subjectivity_mean
+            }
 
 @get("/user/<user_id>/listmessages")
 def userMessages(user_id):
@@ -108,7 +123,7 @@ def createUser():
     except:
         dbname = None
     if name == dbname:
-        return json.dumps({"error": "This name already exists! Try a new one ;)"})
+        return json.dumps({"Error": "This name already exists! Try a new one ;)"})
     else:
         query = """SELECT iduser FROM users ORDER BY iduser DESC limit 1;"""
         cur.execute(query)
@@ -156,6 +171,27 @@ def addMessage():
     id = cur.fetchone()[0]
     print(id)
     return json.dumps(id)
+
+@get("/user/<user_id>/recommend")
+def userRecommend(user_id):
+    data = selectTables("users")
+    print(data)
+    docs = dict()
+    for u in data:
+        print(u[0])
+        messages = userMessages(u[0])
+        mestring = ' '.join([data for ele in messages for data in ele])
+        docs.update({u[1]:mestring})
+    count_vectorizer = CountVectorizer()
+    sparse_matrix = count_vectorizer.fit_transform(docs.values())
+    doc_term_matrix = sparse_matrix.todense()
+    df = pd.DataFrame(doc_term_matrix, columns=count_vectorizer.get_feature_names(), index=docs.keys())
+    similarity_matrix = distance(df, df)
+    sim_df = pd.DataFrame(similarity_matrix, columns=docs.keys(), index=docs.keys())
+    np.fill_diagonal(sim_df.values, 0) # Remove diagonal max values and set those to 0
+    res = {'recommended_users': [e for e in list(sim_df[name].sort_values(ascending=False)[0:3].index)]}
+    return res
+
 
 port = int(os.getenv("PORT", 8080))
 print(f"Running server {port}....")
