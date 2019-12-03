@@ -66,9 +66,7 @@ I will practice in this project:
 - [https://www.getpostman.com/]
 ​
 ## Links - NLP & Text Sentiment Analysis
-- [https://www.nltk.org/]
-- [https://towardsdatascience.com/basic-binary-sentiment-analysis-using-nltk-c94ba17ae386]
-- [https://www.digitalocean.com/community/tutorials/how-to-perform-sentiment-analysis-in-python-3-using-the-natural-language-toolkit-nltk]
+- [https://textblob.readthedocs.io/en/dev/]
 ​
 ## Links - Heroku & Docker & Cloud Databases
 - [https://docs.docker.com/engine/reference/builder/]
