@@ -78,29 +78,7 @@ def insert_name():
     return '''<form method="POST" action="/user/create">
                 Insert a new name: <input name="name"     type="text" />
                 <input type="submit" />
-              </form>'''@get("/<table>")
-def selectTables(table):
-    if table == "users":
-        query = """SELECT * FROM users order by iduser;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        return json.dumps(result)
-    elif table == "messages":
-        query = """SELECT * FROM messages;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        return json.dumps(result)
-    elif table == "chats":
-        query = """SELECT * FROM chats;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        return json.dumps(result)
-    elif table == "iduser":
-        query = """select iduser from users order by iduser desc limit 1;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        print(int(result[0][0])+1)
-        return json.dumps(result) 
+              </form>'''
 
 
 @post('/user/create')
