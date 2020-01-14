@@ -6,8 +6,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import json
 import clear
 
-#DATABASE_URL = os.environ['DATABASE_URL']
-URL = 'postgres://ybgqdfwrfktliz:ed949a4fa7a88c55fc89844f3376c3aa59c4d64bde80a54b78b45d8397591960@ec2-46-137-113-157.eu-west-1.compute.amazonaws.com:5432/dckopqv6o4em74'
+URL = os.environ['DATABASE_URL']
 #Connect to DB
 conn = psycopg2.connect(URL, sslmode='require')
 

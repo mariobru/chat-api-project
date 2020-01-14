@@ -2,8 +2,8 @@
 
 ## Link: https://chat-api-sentiment-analysis.herokuapp.com/
 
-**Description:**  The goal of this project is to analyze the conversations of my team
-to ensure they are happy 😃.
+**Description:**  Bottle API developed in Python that allows you to create users and chats and write message in them. You can also analyze the sentiment of each chat (TextBlob library) and get a recommendation of other users based on what the user has written (sklearn).
+All the data is stored in PostgreSQL in Heroku. The API is in a Docker image also deployed on Heroku.
  
 I will practice in this project:
 - API (bottle)
@@ -13,7 +13,7 @@ I will practice in this project:
 ​
 ## Goals achieved:
 ​​
-- (L1🧐) Write an API in bottle just to store chat messages in a database like mongodb or mysql.
+- (L1🧐) Write an API in bottle just to store chat messages in a PosgreSQL database.
 - (L2🥳) Extract sentiment from chat messages and perform a report over a whole conversation
 - (L3😎) Deploy the service with docker to heroku and store messages in a cloud database.
 - (L4🤭) Recommend friends to a user based on the contents from chat `documents` using a recommender system with `NLP` analysis.
