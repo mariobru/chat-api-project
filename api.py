@@ -24,30 +24,7 @@ def index():
         "Created by": "Mario Bru"
     }
 
-@get("/<table>")
-def selectTables(table):
-    if table == "users":
-        query = """SELECT * FROM users order by iduser;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        return json.dumps(result)
-    elif table == "messages":
-        query = """SELECT * FROM messages;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        return json.dumps(result)
-    elif table == "chats":
-        query = """SELECT * FROM chats;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        return json.dumps(result)
-    elif table == "iduser":
-        query = """select iduser from users order by iduser desc limit 1;"""
-        cur.execute(query)
-        result = cur.fetchall()
-        print(int(result[0][0])+1)
-        return json.dumps(result) 
-
+# List all messages from a chat
 @get("/chat/<chat_id>/list")
 def chatMessages(chat_id):
     chatid = int(chat_id)
@@ -56,6 +33,7 @@ def chatMessages(chat_id):
     result = cur.fetchall()
     return json.dumps(result)
 
+# List all messages a user has written
 @get("/user/<user_id>/messages")
 def userMessages(user_id):
     query = """SELECT text FROM messages WHERE users_iduser={};""".format(user_id)
@@ -63,6 +41,7 @@ def userMessages(user_id):
     result = cur.fetchall()
     return json.dumps(result)
 
+# Show the conversations of a chat with datetime, username and text
 @get("/chat/<chat_id>/showconv")
 def chatConv(chat_id):
     chatid = int(chat_id)
@@ -71,6 +50,7 @@ def chatConv(chat_id):
     result = cur.fetchall()
     return json.dumps(result)
 
+# Show the sentiment analysis of a chat
 @get("/chat/<chat_id>/sentiment")
 def chatSent(chat_id):
     myjson = chatMessages(chat_id)
@@ -92,7 +72,7 @@ def chatSent(chat_id):
             'Subjectivity mean of this chat': subjectivity_mean
             }
 
-
+# Create a new user
 @get('/user/create')
 def insert_name():
     return '''<form method="POST" action="/user/create">
@@ -125,6 +105,7 @@ def createUser():
         print(id)
         return json.dumps(id)
 
+# Create a new chat
 @post('/chat/create')
 def createChat():
     query = """select idchat from chats order by idchat desc limit 1;"""
@@ -137,6 +118,7 @@ def createChat():
     print("New chat created with chatid:",id)
     return json.dumps(id)
 
+# Add a message to a chat
 @get('/chat/addmessage')
 def insert_message():
     return '''<form method="POST" action="/chat/addmessage">
@@ -162,6 +144,7 @@ def addMessage():
     print(id)
     return json.dumps(id)
 
+# Get a recommendation of three users based on what they and you have written on the chats
 @get("/user/<user_id>/recommend")
 def userRecommend(user_id):
     query = """select username from users where iduser={}""".format(user_id)
